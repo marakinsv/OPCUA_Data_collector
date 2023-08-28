@@ -1,0 +1,113 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!--
+
+Файл настроки опроса контроллеров по OPC UA
+
+<Controllers> - блок контроллеров для опроса, содержит элементы <Controller>
+<Controller> - контроллер для опроса
+  uri - строка подключения OPC UA клиента
+  
+  name - имя контроллера, будет использовано в файлах истории и диагностической информации
+  
+  datetime_node_id - числовой идентификатор (nodeid, namespaceindex) узла текущего времени контроллера, 
+                     обычно находится по пути Root/Objects/Server/ServerStatus/CurrentTime
+  
+  HomeDir - корневой каталог для хранения выборок данного контроллера
+  
+  reconnectDelaySeconds - задержка между попытками подключения к контроллеру в секундах при отсутствии связи
+  
+  readInterval - задержка в секундах между запросами к истории
+  
+<Sample> - выборка в контроллере для опроса
+  name - имя выборки
+  
+  node_id - числовой идентификатор (nodeid, namespaceindex) узла с выборкой
+  
+  subdir - имя подкаталога с выборкой, находится в каталоге HomeDir контроллера
+  
+  save_length - длина выборки в секундах. Выборка накапливается в памяти программы, 
+                как только длина выборки достигает этого значения происходит сохранение в файл 
+                
+  EngUnit - размерность сигнала выборки
+  
+  MaxHistoryDays - количество хранимых дней истории, все более старые файлы удаляются
+  
+  IsFixedFrequency - ручное задание частоты. 0 - частота расчитывается из выборки. Любое другое значение - частота подставляется из FixedFrequency
+  
+  FixedFrequency - ручное значение частоты, Гц
+  
+  MaxFrequencyDeviationPercent - максимальное различие выборок частоты. формула расчёта Abs((1 - CurrentBlockFrq / BaseFrq) * 100)
+  
+Принцип работы:
+1. Настраиваем файл config.xml
+2. Программа при запуске читает файл config.xml и запускает потоки опроса контроллеров из списка
+3. Программа читает исторические данные из узла samples_node_id и накапливает их в оперативной памяти
+4. Как только длина (по времени) накопленых данных превысит mera_sample_length формируется файл mera и сохраняется в каталоге mera_dir
+
+Дискретизация выборок автоматически вычисляется по временным метками из читаемой истории или подстваляется из ручного значения
+-->
+
+<Controllers>
+  <Controller uri="opc.tcp://192.168.5.151:4840/" name="Контроллер 1" datetime_node_id="2258, 0" HomeDir="G:\Mera\Controller_1\" reconnectDelaySeconds="30" readInterval="2">
+    <Sample name="ДК1 Выборка Х" node_id="50122, 1" subdir="Sample_1" save_length="60" EngUnit="м/с" MaxHistoryDays="1" IsFixedFrequency="0" FixedFrequency="40000" MaxFrequencyDeviationPercent="0.1" process="1"/>
+    <Sample name="КВД Выборка X" node_id="50145, 1" subdir="Sample_2" save_length="60" EngUnit="м/с" MaxHistoryDays="1" IsFixedFrequency="0" FixedFrequency="40000" MaxFrequencyDeviationPercent="0.1" process="1"/>
+    <Sample name="СТ Выборка X" node_id="50156, 1" subdir="Sample_3" save_length="60" EngUnit="м/с" MaxHistoryDays="1" IsFixedFrequency="0" FixedFrequency="40000" MaxFrequencyDeviationPercent="0.1" process="1"/>
+    <Sample name="КНД Выборка X" node_id="50158, 1" subdir="Sample_4" save_length="60" EngUnit="м/с" MaxHistoryDays="1" IsFixedFrequency="0" FixedFrequency="40000" MaxFrequencyDeviationPercent="0.1" process="1"/>
+  </Controller>
+
+  <Controller uri="opc.tcp://192.168.5.152:4840/" name="Контроллер 2" datetime_node_id="2258, 0" HomeDir="G:\Mera\Controller_2\" reconnectDelaySeconds="30" readInterval="2">
+    <Sample name="ДК1 Выборка X" node_id="50122, 1" subdir="Sample_1" save_length="60" EngUnit="м/с" MaxHistoryDays="1" IsFixedFrequency="0" FixedFrequency="40000" MaxFrequencyDeviationPercent="0.1" process="2"/>
+    <Sample name="КВД Выборка Х" node_id="50145, 1" subdir="Sample_2" save_length="60" EngUnit="м/с" MaxHistoryDays="1" IsFixedFrequency="0" FixedFrequency="40000" MaxFrequencyDeviationPercent="0.1" process="2"/>
+    <Sample name="СТ Выборка X" node_id="50156, 1" subdir="Sample_3" save_length="60" EngUnit="м/с" MaxHistoryDays="1" IsFixedFrequency="0" FixedFrequency="40000" MaxFrequencyDeviationPercent="0.1" process="2"/>
+    <Sample name="КНД Выборка X" node_id="50158, 1" subdir="Sample_4" save_length="60" EngUnit="м/с" MaxHistoryDays="1" IsFixedFrequency="0" FixedFrequency="40000" MaxFrequencyDeviationPercent="0.1" process="2"/>
+  </Controller>
+
+  <Controller uri="opc.tcp://192.168.5.153:4840/" name="Контроллер 3" datetime_node_id="2258, 0" HomeDir="G:\Mera\Controller_3\" reconnectDelaySeconds="30" readInterval="2">
+    <Sample name="ПК Выборка" node_id="50262, 1" subdir="sample_1" save_length="60" EngUnit="м/с" MaxHistoryDays="1" IsFixedFrequency="0" FixedFrequency="40000" MaxFrequencyDeviationPercent="0.1" process="3"/>
+  </Controller>
+
+  <Controller uri="opc.tcp://192.168.5.154:4840/" name="Контроллер 4" datetime_node_id="2258, 0" HomeDir="G:\Mera\Controller_4\" reconnectDelaySeconds="30" readInterval="2">
+    <Sample name="ИКВ-187 Выборка Х2" node_id="51512, 1" subdir="sample_1" save_length="60" EngUnit="м/с" MaxHistoryDays="1" IsFixedFrequency="0" FixedFrequency="40000" MaxFrequencyDeviationPercent="0.1" process="3"/>
+  </Controller>
+
+  <Controller uri="opc.tcp://192.168.5.155:4840/" name="Контроллер 5" datetime_node_id="2258, 0" HomeDir="G:\Mera\Controller_5\" reconnectDelaySeconds="30" readInterval="2">
+    <Sample name="ПК Выборка" node_id="50262, 1" subdir="sample_1" save_length="60" EngUnit="м/с" MaxHistoryDays="1" IsFixedFrequency="0" FixedFrequency="40000" MaxFrequencyDeviationPercent="0.1" process="3"/>
+  </Controller>
+
+  <Controller uri="opc.tcp://192.168.5.156:4840/" name="Контроллер 6" datetime_node_id="2258, 0" HomeDir="G:\Mera\Controller_6\" reconnectDelaySeconds="30" readInterval="2">
+    <Sample name="ПК Выборка" node_id="50262, 1" subdir="sample_1" save_length="60" EngUnit="м/с" MaxHistoryDays="1" IsFixedFrequency="0" FixedFrequency="40000" MaxFrequencyDeviationPercent="0.1" process="4"/>
+  </Controller>
+
+  <Controller uri="opc.tcp://192.168.5.157:4840/" name="Контроллер 7" datetime_node_id="2258, 0" HomeDir="G:\Mera\Controller_7\" reconnectDelaySeconds="30" readInterval="2">
+    <Sample name="ПК Выборка" node_id="50262, 1" subdir="sample_1" save_length="60" EngUnit="м/с" MaxHistoryDays="1" IsFixedFrequency="0" FixedFrequency="40000" MaxFrequencyDeviationPercent="0.1" process="4"/>
+  </Controller>
+
+  <Controller uri="opc.tcp://192.168.5.158:4840/" name="Контроллер 8" datetime_node_id="2258, 0" HomeDir="G:\Mera\Controller_8\" reconnectDelaySeconds="30" readInterval="2">
+    <Sample name="ПК Выборка" node_id="50262, 1" subdir="sample_1" save_length="60" EngUnit="м/с" MaxHistoryDays="1" IsFixedFrequency="0" FixedFrequency="40000" MaxFrequencyDeviationPercent="0.1" process="4"/>
+  </Controller>
+
+  <Controller uri="opc.tcp://192.168.5.159:4840/" name="Контроллер 9" datetime_node_id="2258, 0" HomeDir="G:\Mera\Controller_9\" reconnectDelaySeconds="30" readInterval="2">
+    <Sample name="ПК Выборка" node_id="50262, 1" subdir="sample_1" save_length="60" EngUnit="м/с" MaxHistoryDays="1" IsFixedFrequency="0" FixedFrequency="40000" MaxFrequencyDeviationPercent="0.1" process="5"/>
+  </Controller>
+
+  <Controller uri="opc.tcp://192.168.5.160:4840/" name="Контроллер 10" datetime_node_id="2258, 0" HomeDir="G:\Mera\Controller_10\" reconnectDelaySeconds="30" readInterval="2">
+    <Sample name="ПК Выборка" node_id="50262, 1" subdir="sample_1" save_length="60" EngUnit="м/с" MaxHistoryDays="1" IsFixedFrequency="0" FixedFrequency="40000" MaxFrequencyDeviationPercent="0.1" process="5"/>
+  </Controller>
+
+  <Controller uri="opc.tcp://192.168.5.161:4840/" name="Контроллер 11" datetime_node_id="2258, 0" HomeDir="G:\Mera\Controller_11\" reconnectDelaySeconds="30" readInterval="2">
+    <Sample name="ПК Выборка" node_id="50262, 1" subdir="sample_1" save_length="60" EngUnit="м/с" MaxHistoryDays="1" IsFixedFrequency="0" FixedFrequency="40000" MaxFrequencyDeviationPercent="0.1" process="5"/>
+  </Controller>
+
+  <Controller uri="opc.tcp://192.168.5.162:4840/" name="Контроллер 12" datetime_node_id="2258, 0" HomeDir="G:\Mera\Controller_12\" reconnectDelaySeconds="30" readInterval="2">
+    <Sample name="ПК Выборка" node_id="50262, 1" subdir="sample_1" save_length="60" EngUnit="м/с" MaxHistoryDays="1" IsFixedFrequency="0" FixedFrequency="40000" MaxFrequencyDeviationPercent="0.1" process="6"/>
+  </Controller>
+
+  <Controller uri="opc.tcp://192.168.5.163:4840/" name="Контроллер 13" datetime_node_id="2258, 0" HomeDir="G:\Mera\Controller_13\" reconnectDelaySeconds="30" readInterval="2">
+    <Sample name="ПК Выборка" node_id="50262, 1" subdir="sample_1" save_length="60" EngUnit="м/с" MaxHistoryDays="1" IsFixedFrequency="0" FixedFrequency="40000" MaxFrequencyDeviationPercent="0.1" process="6"/>
+  </Controller>
+
+  <Controller uri="opc.tcp://192.168.5.164:4840/" redundantUri=""  name="Контроллер 14" datetime_node_id="2258, 0" HomeDir="G:\Mera\Controller_14\" reconnectDelaySeconds="30" readInterval="2">
+    <Sample name="ПК Выборка" node_id="50262, 1" subdir="sample_1" save_length="60" EngUnit="м/с" MaxHistoryDays="1" IsFixedFrequency="0" FixedFrequency="40000" MaxFrequencyDeviationPercent="0.1" process="6"/>
+  </Controller>
+
+</Controllers>
